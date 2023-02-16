@@ -18,9 +18,9 @@ import {
   zeroBD,
 } from './helpers'
 
-let cUSDCAddress = '0x39aa39c021dfbae8fac545936693ac917d5e7563'
-let cETHAddress = '0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5'
-let daiAddress = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'
+let cUSDCAddress = '0xBBc29a53A87e340d1986570Bafb6Bfa709081E6C'
+let cETHAddress = '0x11caD8E4323123E12E33C88A79D97D55cd6f91aC'
+let daiAddress = '0xB4160da74F58c44C0ee239e1E8C5032cbA7d51f7'
 
 // Used for all cERC20 contracts
 function getTokenPrice(
@@ -32,7 +32,9 @@ function getTokenPrice(
   let comptroller = Comptroller.load('1')
   let oracleAddress = comptroller.priceOracle as Address
   let underlyingPrice: BigDecimal
-  let priceOracle1Address = Address.fromString('02557a5e05defeffd4cae6d83ea3d173b272c904')
+  let priceOracle1Address = Address.fromString(
+    '0x7600EddCeB7C546789aE0a5fB1Dd4B4f390001EF',
+  )
 
   /* PriceOracle2 is used at the block the Comptroller starts using it.
    * see here https://etherscan.io/address/0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b#events
@@ -49,7 +51,7 @@ function getTokenPrice(
    * and that they handle the decimals different, which can break the subgraph. So we actually
    * defer to Oracle 1 before block 7715908, which works,
    * until this one is deployed, which was used for 121 days */
-  if (blockNumber > 7715908) {
+  if (blockNumber > 1000002) {
     let mantissaDecimalFactor = 18 - underlyingDecimals + 18
     let bdFactor = exponentToBigDecimal(mantissaDecimalFactor)
     let oracle2 = PriceOracle2.bind(oracleAddress)
@@ -80,12 +82,14 @@ function getTokenPrice(
 function getUSDCpriceETH(blockNumber: i32): BigDecimal {
   let comptroller = Comptroller.load('1')
   let oracleAddress = comptroller.priceOracle as Address
-  let priceOracle1Address = Address.fromString('02557a5e05defeffd4cae6d83ea3d173b272c904')
-  let USDCAddress = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 '
+  let priceOracle1Address = Address.fromString(
+    '0x7600EddCeB7C546789aE0a5fB1Dd4B4f390001EF',
+  )
+  let USDCAddress = '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'
   let usdPrice: BigDecimal
 
   // See notes on block number if statement in getTokenPrices()
-  if (blockNumber > 7715908) {
+  if (blockNumber > 1000002) {
     let oracle2 = PriceOracle2.bind(oracleAddress)
     let mantissaDecimalFactorUSDC = 18 - 6 + 18
     let bdFactorUSDC = exponentToBigDecimal(mantissaDecimalFactorUSDC)
